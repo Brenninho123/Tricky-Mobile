@@ -8,6 +8,7 @@ import openfl.utils.Assets as OpenFlAssets;
 class Paths
 {
 	inline public static var SOUND_EXT = #if web "mp3" #else "ogg" #end;
+	inline public static var IMAGE_EXT = #if mobile "astc" #else "png" #end;
 
 	static var currentLevel:String;
 
@@ -95,9 +96,17 @@ class Paths
 		return 'songs:assets/songs/${song.toLowerCase()}/Inst.$SOUND_EXT';
 	}
 
-	inline static public function image(key:String, ?library:String)
+	static public function image(key:String, ?library:String)
 	{
+		#if mobile
+		var astcPath = getPath('images/$key.astc', IMAGE, library);
+		if (OpenFlAssets.exists(astcPath, IMAGE))
+			return astcPath;
+
 		return getPath('images/$key.png', IMAGE, library);
+		#else
+		return getPath('images/$key.png', IMAGE, library);
+		#end
 	}
 
 	inline static public function font(key:String)
@@ -105,12 +114,12 @@ class Paths
 		return 'assets/fonts/$key';
 	}
 
-	inline static public function getSparrowAtlas(key:String, ?library:String)
+	static public function getSparrowAtlas(key:String, ?library:String)
 	{
 		return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
 	}
 
-	inline static public function getPackerAtlas(key:String, ?library:String)
+	static public function getPackerAtlas(key:String, ?library:String)
 	{
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
 	}
