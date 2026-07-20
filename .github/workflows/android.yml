@@ -31,6 +31,7 @@ jobs:
         run: |
           sdkmanager --install "ndk;25.2.9519653"
           echo "ANDROID_NDK_ROOT=$ANDROID_SDK_ROOT/ndk/25.2.9519653" >> $GITHUB_ENV
+          echo "ANDROID_SDK=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
 
       - name: Install Haxelibs
         run: |
@@ -47,11 +48,15 @@ jobs:
           haxelib run lime setup lime -y
 
       - name: Setup Lime Android
-        run: printf 'y\n' | haxelib run lime setup android
+        env:
+          ANDROID_SDK: ${{ env.ANDROID_SDK }}
+          ANDROID_NDK_ROOT: ${{ env.ANDROID_NDK_ROOT }}
+          JAVA_HOME: ${{ env.JAVA_HOME }}
+        run: haxelib run lime setup android
 
       - name: Build Android
         env:
-          ANDROID_SDK: ${{ env.ANDROID_SDK_ROOT }}
+          ANDROID_SDK: ${{ env.ANDROID_SDK }}
           ANDROID_NDK_ROOT: ${{ env.ANDROID_NDK_ROOT }}
         run: haxelib run lime build android -release -verbose
 
